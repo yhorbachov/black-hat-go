@@ -6,22 +6,22 @@ import (
 	"sort"
 )
 
-func Scan(host string, start, end int) []int {
+func Scan(host string, from, to int) []int {
 	ports := make(chan int, 100)
 	results := make(chan int)
 	var openports []int
 
-	for i := start; i < cap(ports); i++ {
+	for i := from; i < cap(ports); i++ {
 		go worker(host, ports, results)
 	}
 
 	go func() {
-		for i := start; i <= end; i++ {
+		for i := from; i <= to; i++ {
 			ports <- i
 		}
 	}()
 
-	for i := start; i <= end; i++ {
+	for i := from; i <= to; i++ {
 		port := <-results
 		if port != 0 {
 			openports = append(openports, port)
